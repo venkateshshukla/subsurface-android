@@ -6,3 +6,6 @@
 	path = subsurface
 	url = git://subsurface.hohndel.org/subsurface.git
 	pushurl = git@github.com:glance-/subsurface.git
+[submodule "libusb"]
+	path = libusb
+	url = https://github.com/venkateshshukla/libusb.git
