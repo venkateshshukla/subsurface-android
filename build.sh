@@ -127,6 +127,19 @@ if [ ! -e $PKG_CONFIG_PATH/libusb-1.0.pc ] ; then
 	popd
 fi
 
+if [ ! -e $PKG_CONFIG_PATH/libftdi1.pc ] ; then
+	mkdir -p libftdi-build-$ARCH
+	pushd libftdi-build-$ARCH
+	cmake ../libftdi -DCMAKE_C_COMPILER=${CC} -DCMAKE_INSTALL_PREFIX=${PREFIX} -DCMAKE_PREFIX_PATH=${PREFIX} -DBUILD_SHARED_LIBS=OFF -DSTATICLIBS=ON -DPYTHON_BINDINGS=OFF -DDOCUMENTATION=OFF -DFTDIPP=OFF
+	make
+	make install
+	popd
+	# Remove the shared parts, We Like static!
+	rm $PREFIX/lib/libftdi1.so*
+	# Remove the pkg-config c++ wrappers, THAT WE DIDNT BUILD!
+	rm $PKG_CONFIG_PATH/libftdipp1.pc
+fi
+
 if [ ! -e libdivecomputer/configure ] ; then
 	pushd libdivecomputer
 	autoreconf -i
