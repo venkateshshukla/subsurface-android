@@ -157,6 +157,8 @@ fi
 
 mkdir -p subsurface-build-$ARCH
 cd subsurface-build-$ARCH
+# Copy the template code into subsurface.
+cp -fr ../template/ android/
 if [ ! -e Makefile ] ; then
 	$QT5_ANDROID_BIN/qmake V=1 QT_CONFIG=+pkg-config ../subsurface
 fi
