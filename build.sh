@@ -140,6 +140,21 @@ if [ ! -e $PKG_CONFIG_PATH/libftdi1.pc ] ; then
 	rm $PKG_CONFIG_PATH/libftdipp1.pc
 fi
 
+if [ ! -e libexif-0.6.21.tar.bz2 ] ; then
+	wget http://kaz.dl.sourceforge.net/project/libexif/libexif/0.6.21/libexif-0.6.21.tar.bz2
+fi
+if [ ! -e libexif-0.6.21 ] ; then
+	tar -xvf libexif-0.6.21.tar.bz2
+fi
+if [ ! -e $PKG_CONFIG_PATH/libexif.pc ] ; then
+	mkdir -p libexif-build-$ARCH
+	pushd libexif-build-$ARCH
+	../libexif-0.6.21/configure  --host=${BUILDCHAIN} --prefix=${PREFIX} --enable-static --disable-shared
+	make
+	make install
+	popd
+fi
+
 if [ ! -e libdivecomputer/configure ] ; then
 	pushd libdivecomputer
 	autoreconf -i
