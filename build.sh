@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 # Configure where we can find things here
-export ANDROID_NDK_ROOT=$PWD/../android-ndk-r9d
-export ANDROID_SDK_ROOT=$PWD/../android-sdk-linux
-export QT5_ANDROID=$PWD/../Qt5.2.1/5.2.1
+export ANDROID_NDK_ROOT=/android_ndk
+export ANDROID_SDK_ROOT=/android_sdk
+export QT5_ANDROID=/Qt5.3.0/5.3
 
 # arm or x86
 export ARCH=${1-arm}
@@ -119,8 +119,12 @@ if [ ! -e libusb-1.0.9 ] ; then
 	tar -jxf libusb-1.0.9.tar.bz2
 fi
 if ! grep -q __ANDROID__ libusb-1.0.9/libusb/io.c ; then
+	pushd libusb-1.0.9
 	# patch libusb to build with android-ndk
-	patch -p1 < libusb-1.0.9-android.patch  libusb-1.0.9/libusb/io.c
+	patch -p1 < ../libusb-1.0.9-android.patch
+	# patch libusb to allow usage of fd
+	patch -p1 < ../libusb-usb-modifications.patch
+	popd
 fi
 if [ ! -e $PKG_CONFIG_PATH/libusb-1.0.pc ] ; then
 	mkdir -p libusb-build-$ARCH
@@ -136,6 +140,12 @@ if [ ! -e libftdi1-1.1.tar.bz2 ] ; then
 fi
 if [ ! -e libftdi1-1.1 ] ; then
 	tar -jxf libftdi1-1.1.tar.bz2
+fi
+
+if ! grep -q HAVE_LIBUSB_OPEN_FD libftdi1-1.1/src/ftdi.c ; then
+	pushd libftdi1-1.1
+	patch -p1 < ../libftdi-usb-modifications.patch
+	popd
 fi
 if [ ! -e $PKG_CONFIG_PATH/libftdipp1.pc ] ; then
 	mkdir -p libftdi1-build-$ARCH
